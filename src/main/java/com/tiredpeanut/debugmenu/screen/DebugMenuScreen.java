@@ -5,16 +5,17 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public class DebugMenuScreen extends Screen {
-    private static final String SCREENID = "debugMenu";
+    private static final String SCREENID = ".debugmenu";
     private static final Component TITLE = Component.translatable("component." + DebugMenuMod.MODID + SCREENID + ".title");
-
+    private static final ResourceLocation BACKGROUND = new ResourceLocation(DebugMenuMod.MODID, "textures/gui/somebackground.png");
 
     private final int imageWidth;
     private final int imageHeight;
     private int leftPos;
-    private int rightPos;
+    private int topPos;
 
     //Widgets
     private Button cancelBtn;
@@ -45,6 +46,8 @@ public class DebugMenuScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        graphics.blit(BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+
         //Adds the dark transparent bg
         //Think of it as the background when a bootstrap modal is opened -- showing my age with this one
         renderBackground(graphics);
@@ -64,7 +67,7 @@ public class DebugMenuScreen extends Screen {
 
         //Center Horizontal
         this.leftPos = (this.width - this.imageWidth) / 2;
-        this.rightPos = (this.height - this.imageHeight) / 2;
+        this.topPos = (this.height - this.imageHeight) / 2;
 
         //Build the cancel btn
         this.cancelBtn = addRenderableWidget(
@@ -72,7 +75,7 @@ public class DebugMenuScreen extends Screen {
                 CANCELBTN,
                 this::HandleCancelBtn
             )
-            .bounds(this.leftPos + 8, this.rightPos + 8, 20, 20)
+            .bounds(this.leftPos + 8, this.topPos + 8, 30, 20)
             .build()
         );
 
@@ -82,7 +85,7 @@ public class DebugMenuScreen extends Screen {
                 SAVEBTN,
                 this::HandleSaveBtn
             )
-            .bounds(cancelBtn.getX() + 8, cancelBtn.getY() + 8, 20, 20)
+            .bounds(cancelBtn.getX() + 40, cancelBtn.getY(), 30, 20)
             .build()
         );
     }
