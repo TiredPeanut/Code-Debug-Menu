@@ -1,13 +1,17 @@
 package com.tiredpeanut.debugmenu.client;
 
 import com.tiredpeanut.debugmenu.DebugMenuMod;
+import com.tiredpeanut.debugmenu.annotations.DebugMenuClass;
+import com.tiredpeanut.debugmenu.annotations.DebugMenuMethod;
 import com.tiredpeanut.debugmenu.screen.DebugMenuScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+@DebugMenuClass
 @Mod.EventBusSubscriber(modid = DebugMenuMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientForgeHandler {
 
@@ -22,6 +26,20 @@ public class ClientForgeHandler {
                 mc.setScreen(new DebugMenuScreen());
             }
 
+        }
+    }
+
+    @SubscribeEvent
+    @DebugMenuMethod(methodDescription = "Player related data")
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) return;
+
+        Player player = event.player;
+        if(player.level().isClientSide() == false) {
+
+            float playerSpeed = 0.1f; // default walking speed
+            player.getAbilities().setWalkingSpeed(playerSpeed);
+            player.onUpdateAbilities();
         }
     }
 }

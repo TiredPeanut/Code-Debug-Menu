@@ -1,10 +1,13 @@
 package com.tiredpeanut.debugmenu.screen;
 
 import com.tiredpeanut.debugmenu.DebugMenuMod;
+import com.tiredpeanut.debugmenu.client.ClientForgeHandler;
+import com.tiredpeanut.debugmenu.utility.ClassFormatter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 
 public class DebugMenuScreen extends Screen {
@@ -56,8 +59,9 @@ public class DebugMenuScreen extends Screen {
         //The order of what is rendered matters
         //Think of it as a z-Index in css for the most part
         //First rendered item is at the lowest index or behind other widgets
-
-
+        String formattedText = ClassFormatter.formatClass(ClientForgeHandler.class);
+        Component asComponent = Component.literal(formattedText);
+        graphics.drawString(minecraft.font, asComponent, this.width / 2 - 50, this.height / 2, 2);
     }
 
     //Think of this as it if it is called in the constructor
@@ -88,5 +92,6 @@ public class DebugMenuScreen extends Screen {
             .bounds(cancelBtn.getX() + 40, cancelBtn.getY(), 30, 20)
             .build()
         );
+
     }
 }
