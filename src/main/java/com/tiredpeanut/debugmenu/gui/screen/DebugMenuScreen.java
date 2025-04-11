@@ -18,8 +18,6 @@ public class DebugMenuScreen extends Screen {
     private static final Component TITLE = Component.translatable("component." + DebugMenuMod.MODID + SCREENID + ".title");
     private static final ResourceLocation BACKGROUND = new ResourceLocation(DebugMenuMod.MODID, "textures/gui/somebackground.png");
 
-    private final int imageWidth;
-    private final int imageHeight;
     private int leftPos;
     private int topPos;
 
@@ -42,8 +40,6 @@ public class DebugMenuScreen extends Screen {
 
     public DebugMenuScreen() {
         super(TITLE);
-        this.imageWidth = 176;
-        this.imageHeight = 166;
     }
 
     //Pauses the game
@@ -57,11 +53,8 @@ public class DebugMenuScreen extends Screen {
     protected void init() {
         super.init();
 
-        //Center Horizontal
-        this.leftPos = (this.width - this.imageWidth) / 2;
-        this.topPos = (this.height - this.imageHeight) / 2;
-
         //Build the cancel btn
+        /*
         this.cancelBtn = addRenderableWidget(
             Button.builder(
                 CANCELBTN,
@@ -80,22 +73,33 @@ public class DebugMenuScreen extends Screen {
             .bounds(cancelBtn.getX() + 40, cancelBtn.getY(), 30, 20)
             .build()
         );
+        */
+        //Idk wtf I'm doing -- sending it at this point with the UI
+        int inspectionListPaddingY = 20;
+        int inspectionListPaddingLeft = 5;
+        this.inspectionList = new InspectionListWidget(this.minecraft, inspectionListPaddingLeft, 150, this.height, inspectionListPaddingY, this.height - inspectionListPaddingY, 30);
 
-        //Idk wtf I'm doing sending it at this point with the UI
-        this.inspectionList = new InspectionListWidget(this.minecraft, 100, this.height, 20, this.height - 20, 20);
         inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, new InspectionListItemModel("A Title", "A description")));
         inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, new InspectionListItemModel("A new Title", "Newest Des")));
+        inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, new InspectionListItemModel("A new Title", "Newest Des")));
+        inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, new InspectionListItemModel("A new Title", "Newest Des")));
+        inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, new InspectionListItemModel("A new Title", "Newest Des")));
+        inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, new InspectionListItemModel("A new Title", "Newest Des")));
+        inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, new InspectionListItemModel("A new Title", "Newest Des")));
+        inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, new InspectionListItemModel("A new Title", "Newest Des")));
+        inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, new InspectionListItemModel("A new Title", "Newest Des")));
+        inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, new InspectionListItemModel("A new Title", "Newest Des")));
+
 
         this.addRenderableWidget(inspectionList);
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        graphics.blit(BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
         //Adds the dark transparent bg
         //Think of it as the background when a bootstrap modal is opened -- showing my age with this one
-        renderBackground(graphics);
+        renderDirtBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTicks);
 
         //The order of what is rendered matters

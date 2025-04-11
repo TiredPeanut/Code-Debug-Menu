@@ -6,13 +6,25 @@ import org.jetbrains.annotations.NotNull;
 
 public class InspectionListWidget extends ObjectSelectionList<InspectionListItem> {
 
-    public InspectionListWidget(Minecraft mc, int width, int height, int top, int bottom, int itemHeight) {
+    public InspectionListWidget(Minecraft mc, int leftPos, int width, int height, int top, int bottom, int itemHeight) {
         super(mc, width, height, top, bottom, itemHeight);
+        this.setLeftPos(leftPos);
     }
+
 
     @Override
     public int addEntry(@NotNull InspectionListItem entry) {
         return super.addEntry(entry);
+    }
+
+    @Override
+    public int getScrollbarPosition() {
+        return this.getLeft() + this.getWidth() - 6; // align scrollbar with list edge
+    }
+
+    @Override
+    public int getLeft() {
+        return super.getLeft() + 4; // optional: give some left margin inside rows
     }
 
     public Minecraft getMinecraftInstance() {
