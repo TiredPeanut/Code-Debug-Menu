@@ -1,7 +1,10 @@
-package com.tiredpeanut.debugmenu.screen;
+package com.tiredpeanut.debugmenu.gui.screen;
 
 import com.tiredpeanut.debugmenu.DebugMenuMod;
 import com.tiredpeanut.debugmenu.client.ClientForgeHandler;
+import com.tiredpeanut.debugmenu.gui.widget.InspectionListItem;
+import com.tiredpeanut.debugmenu.gui.widget.InspectionListItemModel;
+import com.tiredpeanut.debugmenu.gui.widget.InspectionListWidget;
 import com.tiredpeanut.debugmenu.utility.ClassFormatter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -21,6 +24,8 @@ public class DebugMenuScreen extends Screen {
     private int topPos;
 
     //Widgets
+    private InspectionListWidget inspectionList;
+
     private Button cancelBtn;
     private static final Component CANCELBTN = Component.translatable("component." + DebugMenuMod.MODID + SCREENID + ".cancelBtn");
     //What happens when you click the cancel btn
@@ -45,23 +50,6 @@ public class DebugMenuScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return true;
-    }
-
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        graphics.blit(BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
-
-        //Adds the dark transparent bg
-        //Think of it as the background when a bootstrap modal is opened -- showing my age with this one
-        renderBackground(graphics);
-        super.render(graphics, mouseX, mouseY, partialTicks);
-
-        //The order of what is rendered matters
-        //Think of it as a z-Index in css for the most part
-        //First rendered item is at the lowest index or behind other widgets
-        String formattedText = ClassFormatter.formatClass(ClientForgeHandler.class);
-        Component asComponent = Component.literal(formattedText);
-        graphics.drawString(minecraft.font, asComponent, this.width / 2 - 50, this.height / 2, 2);
     }
 
     //Think of this as it if it is called in the constructor
@@ -92,6 +80,30 @@ public class DebugMenuScreen extends Screen {
             .bounds(cancelBtn.getX() + 40, cancelBtn.getY(), 30, 20)
             .build()
         );
+
+        //Idk wtf I'm doing sending it at this point with the UI
+        this.inspectionList = new InspectionListWidget(this.minecraft, 100, this.height, 20, this.height - 20, 20);
+        inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, new InspectionListItemModel("A Title", "A description")));
+        inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, new InspectionListItemModel("A new Title", "Newest Des")));
+
+        this.addRenderableWidget(inspectionList);
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        graphics.blit(BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+
+        //Adds the dark transparent bg
+        //Think of it as the background when a bootstrap modal is opened -- showing my age with this one
+        renderBackground(graphics);
+        super.render(graphics, mouseX, mouseY, partialTicks);
+
+        //The order of what is rendered matters
+        //Think of it as a z-Index in css for the most part
+        //First rendered item is at the lowest index or behind other widgets
+    }
+
+    private void onItemClick(InspectionListItemModel model) {
 
     }
 }

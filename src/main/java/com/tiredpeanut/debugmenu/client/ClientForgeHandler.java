@@ -3,7 +3,7 @@ package com.tiredpeanut.debugmenu.client;
 import com.tiredpeanut.debugmenu.DebugMenuMod;
 import com.tiredpeanut.debugmenu.annotations.DebugMenuClass;
 import com.tiredpeanut.debugmenu.annotations.DebugMenuMethod;
-import com.tiredpeanut.debugmenu.screen.DebugMenuScreen;
+import com.tiredpeanut.debugmenu.gui.screen.DebugMenuScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
