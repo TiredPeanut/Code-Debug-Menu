@@ -11,7 +11,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@DebugMenuClass
+@DebugMenuClass(title = "Forge Events", description = "Intercepted events of the forge event bus even loger text asdfasdfasdf  asdfasd fasd f asdfasdfasdfasdfasdf sdf asdf ")
 @Mod.EventBusSubscriber(modid = DebugMenuMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientForgeHandler {
 

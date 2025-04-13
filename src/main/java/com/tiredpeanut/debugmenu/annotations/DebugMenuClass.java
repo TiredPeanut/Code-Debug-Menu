@@ -8,5 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface DebugMenuClass {
-    boolean displayOnlyAnnotated() default true;
+    String title();
+    String description() default "";
 }
