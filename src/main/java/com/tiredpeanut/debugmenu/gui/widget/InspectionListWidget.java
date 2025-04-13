@@ -18,6 +18,11 @@ public class InspectionListWidget extends ObjectSelectionList<InspectionListItem
     }
 
     @Override
+    public void clearEntries() {
+        super.clearEntries();
+    }
+
+    @Override
     public int getScrollbarPosition() {
         return this.getLeft() + this.getWidth() - 6; // align scrollbar with list edge
     }

@@ -8,6 +8,7 @@ import com.tiredpeanut.debugmenu.utility.DebugMenuAnnotationUtility;
 import com.tiredpeanut.debugmenu.utility.UIUtility;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +16,8 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.List;
 
 public class DebugMenuScreen extends Screen {
+
+    private EditBox searchBox;
 
     public DebugMenuScreen() {
         super(TITLE);
@@ -54,21 +57,28 @@ public class DebugMenuScreen extends Screen {
     protected void init() {
         super.init();
 
-        /*
-
-        */
-        //Idk wtf I'm doing -- sending it at this point with the UI
-        int inspectionListPaddingY = 20;
         int inspectionListPaddingLeft = 5;
-        this.inspectionList = new InspectionListWidget(this.minecraft, inspectionListPaddingLeft, 150, this.height, inspectionListPaddingY, this.height - inspectionListPaddingY, 30);
+
+        //Idk wtf I'm doing -- sending it at this point with the UI
+        int inspectionListPaddingY = 25;
+        this.inspectionList = new InspectionListWidget(this.minecraft, inspectionListPaddingLeft, 150, this.height, inspectionListPaddingY, this.height - 20, 30);
 
         List<InspectionListItemModel> inspectionListItemModels =  DebugMenuAnnotationUtility.getInspectionListItemModels();
-        for(InspectionListItemModel inspectionListItemModel : inspectionListItemModels) {
-            inspectionList.addEntry(new InspectionListItem(inspectionList, this::onItemClick, inspectionListItemModel));
-        }
-
+        this.updateInspectionListItems(inspectionListItemModels);
         this.addRenderableWidget(inspectionList);
 
+        // Search box
+        this.searchBox = new EditBox(
+            this.font,
+            inspectionListPaddingLeft,
+            5,
+            this.inspectionList.getWidth(),
+            16,
+            Component.literal("Search...")
+        );
+        this.searchBox.setResponder(this::onEditBoxChange);
+
+        this.addRenderableWidget(this.searchBox);
 
     }
 
@@ -116,8 +126,26 @@ public class DebugMenuScreen extends Screen {
         );
     }
 
-    private void onItemClick(InspectionListItemModel model) {
+    private void onInspectionListItemClick(InspectionListItemModel model) {
         currentItemDescriptionText = model.description();
+    }
+
+    private void updateInspectionListItems(List<InspectionListItemModel> models) {
+        this.inspectionList.clearEntries();
+        for (InspectionListItemModel model : models) {
+            this.inspectionList.addEntry(new InspectionListItem(this.inspectionList, this::onInspectionListItemClick, model));
+        }
+    }
+
+    private void onEditBoxChange(String query) {
+        String lowerSearch = query.toLowerCase();
+
+        List<InspectionListItemModel> filtered = this.inspectionList.children().stream()
+                .filter(model -> model._model.title().toLowerCase().contains(lowerSearch))
+                .map(s -> s._model)
+                .toList();
+
+        this.updateInspectionListItems(filtered);
     }
 
 }

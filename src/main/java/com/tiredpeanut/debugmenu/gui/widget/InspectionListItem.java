@@ -14,7 +14,7 @@ public class InspectionListItem extends ObjectSelectionList.Entry<InspectionList
 
     private final InspectionListWidget _parent;
     private final Consumer<InspectionListItemModel> _onClickDelegate;
-    private final InspectionListItemModel _model;
+    public final InspectionListItemModel _model;
     private Component _title;
     //private Component _description;
 
