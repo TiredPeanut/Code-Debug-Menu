@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class InspectionListWidget extends ObjectSelectionList<InspectionListItem> {
 
     public InspectionListWidget(Minecraft mc, int leftPos, int width, int height, int top, int bottom, int itemHeight) {
@@ -11,6 +13,14 @@ public class InspectionListWidget extends ObjectSelectionList<InspectionListItem
         this.setLeftPos(leftPos);
     }
 
+    private List<InspectionListItem> allEntries;
+    public List<InspectionListItem> getAllEntries() {
+        return allEntries;
+    }
+
+    public void setAllEntries(List<InspectionListItem> items) {
+        this.allEntries = items;
+    }
 
     @Override
     public int addEntry(@NotNull InspectionListItem entry) {

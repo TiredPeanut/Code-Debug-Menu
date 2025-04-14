@@ -1,5 +1,6 @@
 {
   "component.tiredpeanut_debugmenu.debugmenu.title": "Some Title",
   "component.tiredpeanut_debugmenu.debugmenu.cancelBtn": "Cancel",
-  "component.tiredpeanut_debugmenu.debugmenu.saveBtn": "Save"
+  "component.tiredpeanut_debugmenu.debugmenu.saveBtn": "Save",
+  "component.tiredpeanut_debugmenu.debugmenu.searchBoxPlaceholder": "Search..."
 }
