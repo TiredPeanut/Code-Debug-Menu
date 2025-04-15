@@ -1,10 +1,13 @@
 package com.tiredpeanut.debugmenu.utility;
 
 import com.tiredpeanut.debugmenu.annotations.DebugMenuClass;
-import com.tiredpeanut.debugmenu.gui.widget.InspectionListItem;
+import com.tiredpeanut.debugmenu.annotations.DebugMenuField;
 import com.tiredpeanut.debugmenu.gui.widget.InspectionListItemModel;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.ModFileScanData;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class DebugMenuAnnotationUtility {
@@ -52,6 +55,26 @@ public class DebugMenuAnnotationUtility {
         }
         return debugMenuAttributes;
     }
+
+    public static List<DebugMenuFieldModel> getDebugMenuFieldModels(DebugMenuClass debugMenuClassAnnotation) {
+
+        //Wrong class :(
+        Class<?> assocatatedClass = debugMenuClassAnnotation.getClass();
+
+        List<DebugMenuFieldModel> models = new ArrayList<>();
+        Field[] dields =  assocatatedClass.getFields();
+        for(Field field : Arrays.stream(assocatatedClass.getFields()).filter(field -> field.isAnnotationPresent(DebugMenuField.class)).toList()) {
+            //Pretty sure we can only work with statics here
+            boolean isStatic = Modifier.isStatic(field.getModifiers());
+            if(isStatic == false) continue;
+
+            DebugMenuField fieldAnnotation = field.getAnnotation(DebugMenuField.class);
+            models.add(new DebugMenuFieldModel(field, fieldAnnotation));
+        }
+
+        return models;
+    }
+    public record DebugMenuFieldModel(Field field, DebugMenuField fieldAnnotation) {}
 
     public static List<InspectionListItemModel> getInspectionListItemModels() {
 

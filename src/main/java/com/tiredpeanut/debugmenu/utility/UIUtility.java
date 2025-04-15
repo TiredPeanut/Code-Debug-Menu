@@ -5,15 +5,22 @@ import net.minecraft.client.gui.Font;
 public class UIUtility {
 
     public static String truncateTextToFit(Font font, String text, int maxWidth) {
-        if (font.width(text) <= maxWidth) return text;
+        if (font.width(text) <= maxWidth) {
+            return text; // No need to truncate
+        }
 
-        StringBuilder sb = new StringBuilder();
-        for (char c : text.toCharArray()) {
-            if (font.width(sb.toString() + c + "...") > maxWidth) {
+        String ellipsis = "...";
+        int ellipsisWidth = font.width(ellipsis);
+
+        // Start trimming characters until it fits
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            builder.append(text.charAt(i));
+            if (font.width(builder.toString()) + ellipsisWidth >= maxWidth) {
                 break;
             }
-            sb.append(c);
         }
-        return sb.toString() + "...";
+
+        return builder.toString().trim() + ellipsis;
     }
 }

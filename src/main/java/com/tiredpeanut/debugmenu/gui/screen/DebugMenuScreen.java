@@ -27,9 +27,9 @@ public class DebugMenuScreen extends Screen {
     private static final ResourceLocation BACKGROUND = new ResourceLocation(DebugMenuMod.MODID, "textures/gui/somebackground.png");
 
     private InspectionListWidget inspectionList;
-    private static String currentItemDescriptionText;
+    private static InspectionListItemModel currentSelectedModel;
     private void onInspectionListItemClick(InspectionListItemModel model) {
-        currentItemDescriptionText = model.description();
+        currentSelectedModel = model;
     }
 
     private EditBox searchBox;
@@ -118,20 +118,28 @@ public class DebugMenuScreen extends Screen {
         }
 
         //Create a black rectangle
-        int afterInspectionListRight = this.inspectionList.getRight() + 10;
-        graphics.fill(afterInspectionListRight, 20, this.width - 5, this.height -20, 0xFF000000);
-
-        //Draw the description above the rectangle
-        if(currentItemDescriptionText != null) {
-            String clippedText = UIUtility.truncateTextToFit(this.minecraft.font, currentItemDescriptionText, this.width - 5);
-            Component asComponent = Component.literal(clippedText);
-
-            graphics.drawString(this.minecraft.font, asComponent, afterInspectionListRight, 8, 65535);
-        }
-
         int blackBoxLeft = this.inspectionList.getRight() + 10;
         int blackBoxRight = this.width - 5;
         int blackBoxWidth = blackBoxRight - blackBoxLeft;
+        graphics.fill(blackBoxLeft, 20, this.width - 5, this.height -20, 0xFF000000);
+
+
+        //An item is selected what should we render?
+        if(currentSelectedModel != null) {
+
+            //The Description
+            String clippedText = UIUtility.truncateTextToFit(this.minecraft.font, currentSelectedModel.description(), this.width - blackBoxLeft - 10);
+            Component asComponent = Component.literal(clippedText);
+            graphics.drawString(this.minecraft.font, asComponent, blackBoxLeft, 8, 65535);
+
+            int blackPaddingLeft = blackBoxLeft + 5;
+            for (DebugMenuAnnotationUtility.DebugMenuFieldModel model : DebugMenuAnnotationUtility.getDebugMenuFieldModels(currentSelectedModel.referenceAnnotation())) {
+                String fieldType = model.field().getType().getTypeName();
+                String fieldName = model.field().getName();
+
+                graphics.drawString(this.minecraft.font, fieldType + " " + fieldName, blackPaddingLeft, 25, 65535);
+            }
+        }
 
         int totalPadding = 5 * 3; // left + middle + right
         int buttonWidth = (blackBoxWidth - totalPadding) / 2;

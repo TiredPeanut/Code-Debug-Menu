@@ -11,7 +11,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@DebugMenuClass(title = "Forge Events", description = "Intercepted events of the forge event bus even loger text asdfasdfasdf  asdfasd fasd f asdfasdfasdfasdfasdf sdf asdf ")
 @Mod.EventBusSubscriber(modid = DebugMenuMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientForgeHandler {
 
@@ -25,21 +24,6 @@ public class ClientForgeHandler {
             if(mc.screen == null) {
                 mc.setScreen(new DebugMenuScreen());
             }
-
-        }
-    }
-
-    @SubscribeEvent
-    @DebugMenuMethod(methodDescription = "Player related data")
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) return;
-
-        Player player = event.player;
-        if(player.level().isClientSide() == false) {
-
-            float playerSpeed = 0.1f; // default walking speed
-            player.getAbilities().setWalkingSpeed(playerSpeed);
-            player.onUpdateAbilities();
         }
     }
 }
