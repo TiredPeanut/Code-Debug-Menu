@@ -46,24 +46,20 @@ public class DebugMenuAnnotationUtility {
         return classList;
     }
 
-    private static List<DebugMenuClass> getDebugMenuClassAnnotations() {
-        List<DebugMenuClass> debugMenuAttributes = new ArrayList<>();
+    private static Dictionary<Class<?>, DebugMenuClass> getDebugMenuLookup() {
+        Dictionary<Class<?>, DebugMenuClass> debugMenuAttributes = new Hashtable<>();
 
         List<Class<?>> classes =  getClassesFromClassNames();
         for(Class<?> classToInspect : classes) {
-            debugMenuAttributes.add(classToInspect.getAnnotation(DebugMenuClass.class));
+            debugMenuAttributes.put(classToInspect, classToInspect.getAnnotation(DebugMenuClass.class));
         }
         return debugMenuAttributes;
     }
 
-    public static List<DebugMenuFieldModel> getDebugMenuFieldModels(DebugMenuClass debugMenuClassAnnotation) {
-
-        //Wrong class :(
-        Class<?> assocatatedClass = debugMenuClassAnnotation.getClass();
+    public static List<DebugMenuFieldModel> getDebugMenuFieldModels(Class<?> target) {
 
         List<DebugMenuFieldModel> models = new ArrayList<>();
-        Field[] dields =  assocatatedClass.getFields();
-        for(Field field : Arrays.stream(assocatatedClass.getFields()).filter(field -> field.isAnnotationPresent(DebugMenuField.class)).toList()) {
+        for(Field field : Arrays.stream(target.getDeclaredFields()).filter(field -> field.isAnnotationPresent(DebugMenuField.class)).toList()) {
             //Pretty sure we can only work with statics here
             boolean isStatic = Modifier.isStatic(field.getModifiers());
             if(isStatic == false) continue;
@@ -80,9 +76,13 @@ public class DebugMenuAnnotationUtility {
 
         List<InspectionListItemModel> inspectionListItems = new ArrayList<>();
 
-        List<DebugMenuClass> debugMenuAttributes = getDebugMenuClassAnnotations();
-        for(DebugMenuClass attribute : debugMenuAttributes) {
-            InspectionListItemModel item = new InspectionListItemModel(attribute.title(), attribute.description(), attribute);
+        Dictionary<Class<?>, DebugMenuClass> debugMenuLookups = getDebugMenuLookup();
+        Enumeration<Class<?>> keys = debugMenuLookups.keys();
+
+        while (keys.hasMoreElements()) {
+            Class<?> current = keys.nextElement();
+            DebugMenuClass value = debugMenuLookups.get(current);
+            InspectionListItemModel item = new InspectionListItemModel(value.title(), value.description(), value, current);
             inspectionListItems.add(item);
         }
 

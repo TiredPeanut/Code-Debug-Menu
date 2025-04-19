@@ -12,6 +12,8 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +29,32 @@ public class DebugMenuScreen extends Screen {
     private static final ResourceLocation BACKGROUND = new ResourceLocation(DebugMenuMod.MODID, "textures/gui/somebackground.png");
 
     private InspectionListWidget inspectionList;
-    private static InspectionListItemModel currentSelectedModel;
+    private static InspectionListItemModel currentSelectedItemModel;
+    private static Component currentSelectedItemDescription;
     private void onInspectionListItemClick(InspectionListItemModel model) {
-        currentSelectedModel = model;
+        int blackBoxLeft = this.inspectionList.getRight() + 10;
+        String descriptionClippedText = UIUtility.truncateTextToFit(this.minecraft.font, model.description(), this.width - blackBoxLeft - 10);
+        currentSelectedItemDescription = Component.literal(descriptionClippedText);
+        currentSelectedItemModel = model;
+
+        int y = 25; // start drawing at Y=25
+        int lineSpacing = this.minecraft.font.lineHeight + 4; // adjust for font size + spacing
+        int blackPaddingLeft = blackBoxLeft + 5;
+        int maxTextWidth = this.width - blackPaddingLeft - 10;
+
+        for (DebugMenuAnnotationUtility.DebugMenuFieldModel fieldModel : DebugMenuAnnotationUtility.getDebugMenuFieldModels(currentSelectedItemModel.referenceClass())) {
+            String fieldType = fieldModel.field().getType().getTypeName();
+            String fieldName = fieldModel.field().getName();
+            String fullText = fieldType + " " + fieldName;
+
+            for (FormattedCharSequence line : this.minecraft.font.split(Component.literal(fullText), maxTextWidth)) {
+                graphics.drawString(this.minecraft.font, line, blackPaddingLeft, y, 65535);
+                y += lineSpacing;
+            }
+
+            EditBox valueEditBox = new EditBox(this.minecraft.font, blackPaddingLeft, y, 20, 16, Component.literal("test"));
+            this.addRenderableWidget(valueEditBox);
+        }
     }
 
     private EditBox searchBox;
@@ -89,16 +114,16 @@ public class DebugMenuScreen extends Screen {
             5,
             this.inspectionList.getWidth(),
             16,
-                searchBoxPlaceholder
+            searchBoxPlaceholder
         );
         this.searchBox.setResponder(this::onSearchBoxChange);
-
         this.addRenderableWidget(this.searchBox);
 
+        initButtons();
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 
         //Adds the dark transparent bg
         //Think of it as the background when a bootstrap modal is opened -- showing my age with this one
@@ -109,7 +134,7 @@ public class DebugMenuScreen extends Screen {
         if (this.searchBox.getValue().isEmpty() && !this.searchBox.isFocused()) {
             graphics.drawString(
                 this.font,
-                    searchBoxPlaceholder,
+                searchBoxPlaceholder,
                 this.searchBox.getX() + 4,
                 this.searchBox.getY() + 4,
                 0x888888, // light gray placeholder text
@@ -124,39 +149,38 @@ public class DebugMenuScreen extends Screen {
         graphics.fill(blackBoxLeft, 20, this.width - 5, this.height -20, 0xFF000000);
 
 
+        int y = 25; // start drawing at Y=25
+        int lineSpacing = this.minecraft.font.lineHeight + 4; // adjust for font size + spacing
+        int blackPaddingLeft = blackBoxLeft + 5;
+        int maxTextWidth = this.width - blackPaddingLeft - 10;
         //An item is selected what should we render?
-        if(currentSelectedModel != null) {
+        if(currentSelectedItemModel != null) {
 
-            //The Description
-            String clippedText = UIUtility.truncateTextToFit(this.minecraft.font, currentSelectedModel.description(), this.width - blackBoxLeft - 10);
-            Component asComponent = Component.literal(clippedText);
-            graphics.drawString(this.minecraft.font, asComponent, blackBoxLeft, 8, 65535);
+            graphics.drawString(this.minecraft.font, currentSelectedItemDescription, blackBoxLeft, 8, 65535);
 
-            int blackPaddingLeft = blackBoxLeft + 5;
-            for (DebugMenuAnnotationUtility.DebugMenuFieldModel model : DebugMenuAnnotationUtility.getDebugMenuFieldModels(currentSelectedModel.referenceAnnotation())) {
-                String fieldType = model.field().getType().getTypeName();
-                String fieldName = model.field().getName();
-
-                graphics.drawString(this.minecraft.font, fieldType + " " + fieldName, blackPaddingLeft, 25, 65535);
-            }
         }
 
-        int totalPadding = 5 * 3; // left + middle + right
-        int buttonWidth = (blackBoxWidth - totalPadding) / 2;
 
-        int cancelBtnX = blackBoxLeft + 5;
+    }
+
+    private void initButtons() {
+        int totalWidth = (this.width - 5) - (this.inspectionList.getRight() + 10);
+        int totalPadding = 5 * 3; // left + middle + right
+        int buttonWidth = (totalWidth - totalPadding) / 2;
+
+        int cancelBtnX = this.inspectionList.getRight() + 15;
         int saveBtnX = cancelBtnX + buttonWidth + 5;
 
         this.cancelBtn = addRenderableWidget(
-            Button.builder(CANCELBTN, this::onCancelBtnClick)
-                .bounds(cancelBtnX, this.height - 17, buttonWidth, 15)
-                .build()
+                Button.builder(CANCELBTN, this::onCancelBtnClick)
+                        .bounds(cancelBtnX, this.height - 17, buttonWidth, 15)
+                        .build()
         );
 
         this.saveBtn = addRenderableWidget(
-            Button.builder(SAVEBTN, this::onSaveBtnClick)
-                .bounds(saveBtnX, this.height - 17, buttonWidth, 15)
-                .build()
+                Button.builder(SAVEBTN, this::onSaveBtnClick)
+                        .bounds(saveBtnX, this.height - 17, buttonWidth, 15)
+                        .build()
         );
     }
 

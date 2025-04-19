@@ -12,8 +12,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = DebugMenuMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
-@DebugMenuClass(title = "Player Events", description = "Example inspection")
-public class ExampleInspection {
+@DebugMenuClass(title = "Player Events", description = "Example inspection Player")
+public class ExampleInspectionPlayer {
 
     @DebugMenuField(descriptionToolTip = "Your walking speed -- base player speed is 0.1f")
     public static float playerSpeed;
